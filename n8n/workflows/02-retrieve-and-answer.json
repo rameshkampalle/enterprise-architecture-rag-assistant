@@ -3,6 +3,8 @@
   "nodes": [
     {
       "parameters": {
+        "public": true,
+        "initialMessages": "Hello! 👋\n\nI’m the Enterprise Architecture Knowledge Assistant. Ask me about architecture principles, API standards, security policies, integration guidelines, logging, or incident management.\n\nMy answers are grounded in the approved enterprise documents and include source citations.",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
@@ -152,8 +154,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        1504,
-        224
+        1776,
+        256
       ],
       "id": "faeb4376-be10-45c5-bb47-24aade9ff035",
       "name": "Google Gemini Chat Model",
@@ -174,8 +176,8 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.8,
       "position": [
-        1360,
-        0
+        1632,
+        -16
       ],
       "id": "0a721ac4-3fc2-41b2-97f1-25dfa6350f45",
       "name": "Score Answer Correctness"
@@ -213,11 +215,24 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.8,
       "position": [
-        1184,
-        0
+        1440,
+        -16
       ],
       "id": "616095b6-bd4d-49dd-85a6-17664b8aa69e",
       "name": "Set Evaluation Outputs"
+    },
+    {
+      "parameters": {
+        "operation": "checkIfEvaluating"
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "964ef2e7-3dce-4ff8-a2fc-8173677992b9",
+      "name": "Evaluation"
     }
   ],
   "pinData": {},
@@ -303,7 +318,7 @@
       "main": [
         [
           {
-            "node": "Set Evaluation Outputs",
+            "node": "Evaluation",
             "type": "main",
             "index": 0
           }
@@ -331,15 +346,26 @@
           }
         ]
       ]
+    },
+    "Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Set Evaluation Outputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "121997f3-6f3d-4ac3-b6cb-299364924acb",
+  "versionId": "e7cc8f4f-88f6-4704-a93d-151945698c4e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "5c1fbd426fe5b62cb9dc7b10d13e031d2526be4b43adee1462a3810c5e6690ad"
