@@ -148,8 +148,8 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        1024,
-        528
+        1040,
+        544
       ],
       "id": "12f38aeb-01b1-412e-b03b-e46fe9aa46de",
       "name": "Chunk Text - 800-120"
@@ -281,7 +281,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "71c06b0d-dc6c-4551-b41f-a0c3269cc2c5",
+  "versionId": "e3f2a6c3-182d-4e01-a18d-4993cf6a8c03",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "5c1fbd426fe5b62cb9dc7b10d13e031d2526be4b43adee1462a3810c5e6690ad"

@@ -1,0 +1,269 @@
+{
+  "name": "03-load-evaluation-dataset",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        0
+      ],
+      "id": "09201d9a-f9d7-4324-9859-dd11b7843466",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/rameshkampalle/enterprise-architecture-rag-assistant/main/evaluation/questions.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "abe913d4-38e1-4f42-a3c9-c67e9ce53671",
+      "name": "Download Evaluation Questions"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/rameshkampalle/enterprise-architecture-rag-assistant/main/evaluation/ground_truth.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        208
+      ],
+      "id": "e91cd4db-e353-47ab-9324-dabe78680e5a",
+      "name": "Download Ground Truth"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "id",
+              "field2": "id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        528,
+        80
+      ],
+      "id": "9d66fa00-76e4-49e7-818e-eef414e275db",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    question_id: item.json.id,\n    category: item.json.category,\n    question: item.json.question,\n    expected_sources: JSON.stringify(item.json.expected_sources),\n    expected_facts: JSON.stringify(item.json.expected_facts),\n    should_refuse: Boolean(item.json.should_refuse),\n    evaluator_notes: item.json.evaluator_notes\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        80
+      ],
+      "id": "08ee4eea-615e-4462-8632-6970df7dfc0c",
+      "name": "Prepare Evaluation Rows"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "wMVRcA8NFVyrAhtd",
+          "mode": "list",
+          "cachedResultName": "rag-evaluation-dataset",
+          "cachedResultUrl": "/projects/Xv9DFYPU1GQgcWgB/datatables/wMVRcA8NFVyrAhtd"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "should_refuse": false
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "question_id",
+              "displayName": "question_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "question",
+              "displayName": "question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "expected_sources",
+              "displayName": "expected_sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "expected_facts",
+              "displayName": "expected_facts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "should_refuse",
+              "displayName": "should_refuse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "evaluator_notes",
+              "displayName": "evaluator_notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        80
+      ],
+      "id": "1454a2f6-9472-4c72-8f04-66d48e7450ad",
+      "name": "Insert row"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download Evaluation Questions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Ground Truth",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Ground Truth": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Evaluation Questions": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Prepare Evaluation Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Evaluation Rows": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7d1daeb1-56fb-4088-9e96-f0f82347001e",
+  "meta": {
+    "instanceId": "5c1fbd426fe5b62cb9dc7b10d13e031d2526be4b43adee1462a3810c5e6690ad"
+  },
+  "nodeGroups": [],
+  "id": "GYPsfTuU9837cUEY",
+  "tags": []
+}

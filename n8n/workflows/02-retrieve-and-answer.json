@@ -8,7 +8,7 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.4,
       "position": [
-        0,
+        -160,
         0
       ],
       "id": "4d112d59-94ca-435a-9009-0f3b3bf4b3ca",
@@ -24,7 +24,7 @@
           "mode": "list",
           "cachedResultName": "enterprise-architecture-rag"
         },
-        "prompt": "={{ $json.chatInput }}",
+        "prompt": "={{ $json.question }}",
         "topK": 5,
         "options": {
           "pineconeNamespace": "corpus-v1"
@@ -33,7 +33,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        224,
+        288,
         0
       ],
       "id": "9a2a93b5-1072-4423-83ec-b5e4586d43a5",
@@ -50,7 +50,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        224,
+        288,
         224
       ],
       "id": "d8062b66-18d7-4975-9178-e8a5074ca842",
@@ -64,7 +64,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const question =\n  $('When chat message received').first().json.chatInput;\n\nconst chunks = items.map((item, index) => {\n  const document = item.json.document ?? {};\n  const metadata = document.metadata ?? {};\n\n  return {\n    rank: index + 1,\n    score: item.json.score ?? null,\n    page_content: document.pageContent ?? '',\n    document_id: metadata.document_id ?? '',\n    title: metadata.title ?? '',\n    source_file: metadata.source_file ?? '',\n    source_url: metadata.source_url ?? ''\n  };\n});\n\nconst context = chunks\n  .map(chunk => [\n    `[Source: ${chunk.source_file}]`,\n    `Title: ${chunk.title}`,\n    `File: ${chunk.source_file}`,\n    `Score: ${chunk.score}`,\n    `Content:`,\n    chunk.page_content\n  ].join('\\n'))\n  .join('\\n\\n---\\n\\n');\n\nconst sources = [\n  ...new Map(\n    chunks.map(chunk => [\n      chunk.source_file,\n      {\n        document_id: chunk.document_id,\n        title: chunk.title,\n        source_file: chunk.source_file,\n        source_url: chunk.source_url\n      }\n    ])\n  ).values()\n];\n\nreturn [{\n  json: {\n    question,\n    context,\n    sources,\n    chunks,\n    retrieval_count: chunks.length,\n    top_score: chunks[0]?.score ?? 0\n  }\n}];"
+        "jsCode": "const question = $('Normalize Question Input').first().json.question;\n\nconst chunks = items.map((item, index) => {\n  const document = item.json.document ?? {};\n  const metadata = document.metadata ?? {};\n\n  return {\n    rank: index + 1,\n    score: item.json.score ?? null,\n    page_content: document.pageContent ?? '',\n    document_id: metadata.document_id ?? '',\n    title: metadata.title ?? '',\n    source_file: metadata.source_file ?? '',\n    source_url: metadata.source_url ?? ''\n  };\n});\n\nconst context = chunks\n  .map(chunk => [\n    `[Source: ${chunk.source_file}]`,\n    `Title: ${chunk.title}`,\n    `File: ${chunk.source_file}`,\n    `Score: ${chunk.score}`,\n    `Content:`,\n    chunk.page_content\n  ].join('\\n'))\n  .join('\\n\\n---\\n\\n');\n\nconst sources = [\n  ...new Map(\n    chunks.map(chunk => [\n      chunk.source_file,\n      {\n        document_id: chunk.document_id,\n        title: chunk.title,\n        source_file: chunk.source_file,\n        source_url: chunk.source_url\n      }\n    ])\n  ).values()\n];\n\nreturn [{\n  json: {\n    question,\n    context,\n    sources,\n    chunks,\n    retrieval_count: chunks.length,\n    top_score: chunks[0]?.score ?? 0\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -85,8 +85,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        752,
-        208
+        816,
+        224
       ],
       "id": "e01bb022-bfab-4633-9ad7-8d34b03ef2d7",
       "name": "Gemini Answer Model",
@@ -111,6 +111,113 @@
       ],
       "id": "64677b85-4da4-4bce-8591-72f8ba56a5d4",
       "name": "Generate Cited Answer"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "wMVRcA8NFVyrAhtd",
+          "mode": "list",
+          "cachedResultName": "rag-evaluation-dataset",
+          "cachedResultUrl": "/projects/Xv9DFYPU1GQgcWgB/datatables/wMVRcA8NFVyrAhtd"
+        }
+      },
+      "type": "n8n-nodes-base.evaluationTrigger",
+      "typeVersion": 4.7,
+      "position": [
+        -160,
+        -208
+      ],
+      "id": "0f44ac3d-5e58-4f34-bfc0-3288c339974d",
+      "name": "When fetching a dataset row"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    ...item.json,\n    question: item.json.question ?? item.json.chatInput\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -208
+      ],
+      "id": "15d85192-0641-41a3-9141-6718f487cf4d",
+      "name": "Normalize Question Input"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1504,
+        224
+      ],
+      "id": "faeb4376-be10-45c5-bb47-24aade9ff035",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CbLfwLCDTG8kqZZH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "expectedAnswer": "={{ $('When fetching a dataset row').first().json.should_refuse\n  ? \"The assistant should refuse because the requested information is not available in the provided documents.\"\n  : $('When fetching a dataset row').first().json.expected_facts\n}}",
+        "actualAnswer": "={{ $('Generate Cited Answer').first().json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "0a721ac4-3fc2-41b2-97f1-25dfa6350f45",
+      "name": "Score Answer Correctness"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "wMVRcA8NFVyrAhtd",
+          "mode": "list",
+          "cachedResultName": "rag-evaluation-dataset",
+          "cachedResultUrl": "/projects/Xv9DFYPU1GQgcWgB/datatables/wMVRcA8NFVyrAhtd"
+        },
+        "outputs": {
+          "values": [
+            {
+              "outputName": "actual_answer",
+              "outputValue": "={{ $json.text }}"
+            },
+            {
+              "outputName": "retrieved_sources",
+              "outputValue": "={{ JSON.stringify($('Build Grounded Context').first().json.sources.map(source => source.source_file)) }}"
+            },
+            {
+              "outputName": "top_score",
+              "outputValue": "={{ $('Build Grounded Context').first().json.top_score }}"
+            },
+            {
+              "outputName": "retrieval_count",
+              "outputValue": "={{ $('Build Grounded Context').first().json.retrieval_count }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "616095b6-bd4d-49dd-85a6-17664b8aa69e",
+      "name": "Set Evaluation Outputs"
     }
   ],
   "pinData": {},
@@ -119,7 +226,7 @@
       "main": [
         [
           {
-            "node": "Retrieve Top 5 Chunks",
+            "node": "Normalize Question Input",
             "type": "main",
             "index": 0
           }
@@ -169,6 +276,61 @@
           }
         ]
       ]
+    },
+    "When fetching a dataset row": {
+      "main": [
+        [
+          {
+            "node": "Normalize Question Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Question Input": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Top 5 Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Cited Answer": {
+      "main": [
+        [
+          {
+            "node": "Set Evaluation Outputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Score Answer Correctness",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Evaluation Outputs": {
+      "main": [
+        [
+          {
+            "node": "Score Answer Correctness",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -177,7 +339,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "48673ef7-ef17-4e82-bb00-626c6358b3a3",
+  "versionId": "121997f3-6f3d-4ac3-b6cb-299364924acb",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "5c1fbd426fe5b62cb9dc7b10d13e031d2526be4b43adee1462a3810c5e6690ad"
