@@ -1,0 +1,292 @@
+{
+  "name": "01-ingest-corpus",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        64
+      ],
+      "id": "d5eae568-6825-4553-a09d-6b5cf4fc74f2",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "const manifest = $items('Build Corpus Manifest');\n\nconst mimeTypes = {\n  pdf: 'application/pdf',\n  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',\n  txt: 'text/plain'\n};\n\nreturn items.map((item, index) => {\n  const metadata = manifest[index].json;\n  const extension = metadata.source_file.split('.').pop().toLowerCase();\n\n  item.json = metadata;\n  item.binary.data.fileName = metadata.source_file;\n  item.binary.data.fileExtension = extension;\n  item.binary.data.mimeType = mimeTypes[extension];\n\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        64
+      ],
+      "id": "e080f1ac-222f-4e0f-a4c8-9a46ed0f63dd",
+      "name": "Prepare Document Metadata"
+    },
+    {
+      "parameters": {
+        "jsCode": "const baseUrl =\n  'https://raw.githubusercontent.com/rameshkampalle/enterprise-architecture-rag-assistant/main/data/corpus';\n\nconst documents = [\n  {\n    document_id: 'api-design-standards',\n    title: 'API Design Standards',\n    source_file: 'api-design-standards.pdf'\n  },\n  {\n    document_id: 'api-error-codes',\n    title: 'API Error Codes',\n    source_file: 'api-error-codes.txt'\n  },\n  {\n    document_id: 'architecture-principles',\n    title: 'Architecture Principles',\n    source_file: 'architecture-principles.docx'\n  },\n  {\n    document_id: 'cloud-security-policy',\n    title: 'Cloud Security Policy',\n    source_file: 'cloud-security-policy.pdf'\n  },\n  {\n    document_id: 'data-classification-policy',\n    title: 'Data Classification Policy',\n    source_file: 'data-classification-policy.docx'\n  },\n  {\n    document_id: 'incident-management',\n    title: 'Incident Management',\n    source_file: 'incident-management.txt'\n  },\n  {\n    document_id: 'integration-architecture-guidelines',\n    title: 'Integration Architecture Guidelines',\n    source_file: 'integration-architecture-guidelines.pdf'\n  },\n  {\n    document_id: 'logging-monitoring-standard',\n    title: 'Logging and Monitoring Standard',\n    source_file: 'logging-monitoring-standard.pdf'\n  }\n];\n\nreturn documents.map(document => ({\n  json: {\n    ...document,\n    corpus_version: 'v1',\n    url: `${baseUrl}/${document.source_file}`\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        64
+      ],
+      "id": "e80c10b7-c686-44e1-8e4d-e72df9cdc11e",
+      "name": "Build Corpus Manifest"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        48,
+        64
+      ],
+      "id": "9ccb039f-de6d-4ac6-b3b5-ce60d6d5b91d",
+      "name": "Download Corpus File"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        496,
+        64
+      ],
+      "id": "a676ba78-9454-46b8-a052-79250b3e8b37",
+      "name": "For Each Document"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "enterprise-architecture-rag",
+          "mode": "list",
+          "cachedResultName": "enterprise-architecture-rag"
+        },
+        "options": {
+          "pineconeNamespace": "corpus-v1"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        864,
+        64
+      ],
+      "id": "975961d2-b811-42db-9774-be3c4f73ebb4",
+      "name": "Index Document Chunks",
+      "credentials": {
+        "pineconeApi": {
+          "id": "CECKdrO16Dc6BAAs",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "document_id",
+                "value": "={{ $json.document_id }}"
+              },
+              {
+                "name": "title",
+                "value": "={{ $json.title }}"
+              },
+              {
+                "name": "source_file",
+                "value": "={{ $json.source_file }}"
+              },
+              {
+                "name": "corpus_version",
+                "value": "={{ $json.corpus_version }}"
+              },
+              {
+                "name": "source_url",
+                "value": "={{ $json.url }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        352
+      ],
+      "id": "18dd6462-4b6e-4c12-bfe7-fa1a73a9a038",
+      "name": "Load Document and Metadata"
+    },
+    {
+      "parameters": {
+        "chunkSize": 800,
+        "chunkOverlap": 120,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        528
+      ],
+      "id": "12f38aeb-01b1-412e-b03b-e46fe9aa46de",
+      "name": "Chunk Text - 800-120"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        864,
+        320
+      ],
+      "id": "315d366e-37cc-4794-a9f7-4483513ea4c9",
+      "name": "Create Gemini Embeddings",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CbLfwLCDTG8kqZZH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Build Corpus Manifest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Document Metadata": {
+      "main": [
+        [
+          {
+            "node": "For Each Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Corpus Manifest": {
+      "main": [
+        [
+          {
+            "node": "Download Corpus File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Corpus File": {
+      "main": [
+        [
+          {
+            "node": "Prepare Document Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "For Each Document": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Index Document Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Index Document Chunks": {
+      "main": [
+        [
+          {
+            "node": "For Each Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Document and Metadata": {
+      "ai_document": [
+        [
+          {
+            "node": "Index Document Chunks",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chunk Text - 800-120": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Load Document and Metadata",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Gemini Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Index Document Chunks",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "71c06b0d-dc6c-4551-b41f-a0c3269cc2c5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5c1fbd426fe5b62cb9dc7b10d13e031d2526be4b43adee1462a3810c5e6690ad"
+  },
+  "nodeGroups": [],
+  "id": "WBDrUJZcEjmlZdxK",
+  "tags": []
+}
