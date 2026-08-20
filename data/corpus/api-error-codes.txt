@@ -1,0 +1,61 @@
+API ERROR CODE REFERENCE
+Document ID: AER-API-005
+Owner: API Platform Team
+Version: 1.1
+Effective: 2026-06-20
+Synthetic training document - created for the Week 2 RAG project. No real company policy is represented.
+
+Purpose
+This reference defines stable error codes used by example Asteria Digital Services APIs. It supplements the API Design Standards.
+
+E1001 - INVALID_REQUEST
+HTTP status: 400
+Meaning: The request is syntactically valid JSON but is missing a required field, contains an invalid field value, or violates request schema validation.
+Retry guidance: Do not retry unchanged. Correct the request first.
+Example safe message: "The request failed validation."
+
+E1002 - AUTHENTICATION_REQUIRED
+HTTP status: 401
+Meaning: The request does not contain valid authentication credentials, the access token is missing, or the token is expired/invalid.
+Retry guidance: Obtain valid credentials or a new token before retrying.
+Security note: Never return the token value or authentication internals in the error response.
+
+E1003 - FORBIDDEN
+HTTP status: 403
+Meaning: The caller is authenticated but does not have permission to perform the requested action.
+Retry guidance: Do not automatically retry. Access must be corrected through the authorization process.
+
+E2001 - DEPENDENCY_TIMEOUT
+HTTP status: 504
+Meaning: The API could not complete because a required downstream dependency exceeded the configured response timeout.
+Retry guidance: A bounded retry may be appropriate when the operation is idempotent and the failure is transient. Follow the Integration Architecture Guidelines.
+
+E2002 - RATE_LIMITED
+HTTP status: 429
+Meaning: The client exceeded an enforced request-rate limit.
+Retry guidance: Respect Retry-After when supplied. Do not retry in a tight loop.
+
+E2003 - DEPENDENCY_UNAVAILABLE
+HTTP status: 503
+Meaning: A required downstream dependency is temporarily unavailable.
+Retry guidance: Retry only according to bounded transient-failure policy, preferably with exponential backoff and jitter.
+
+E3001 - INTERNAL_ERROR
+HTTP status: 500
+Meaning: An unexpected server-side error occurred.
+Retry guidance: The client may retry only when the operation is safe and retry policy allows it.
+Logging note: Internal stack traces and implementation details belong in protected operational logs, not in the API response.
+
+Standard Error Response Fields
+- errorCode
+- errorMessage
+- correlationId
+- timestamp
+
+Example:
+{
+  "errorCode": "E2001",
+  "errorMessage": "A downstream service did not respond in time.",
+  "correlationId": "4f93d4b1-7f61-4ad7-9adc-95d2d9c8c921",
+  "timestamp": "2026-06-20T09:30:00Z"
+}

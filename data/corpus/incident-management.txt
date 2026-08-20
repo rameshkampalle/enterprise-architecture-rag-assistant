@@ -1,0 +1,50 @@
+INCIDENT MANAGEMENT GUIDE
+Document ID: IMG-OPS-006
+Owner: Service Operations
+Version: 1.6
+Effective: 2026-05-01
+Synthetic training document - created for the Week 2 RAG project. No real company policy is represented.
+
+1. PURPOSE
+This guide defines the minimum process for identifying, classifying, escalating, communicating, and closing production incidents.
+
+2. SEVERITY LEVELS
+P1 - Critical
+- Complete outage of a critical business service, confirmed major security compromise, or major loss of Restricted data.
+- Incident commander must be assigned immediately.
+- Operations and relevant security/business owners must be notified within 15 minutes.
+- Status updates should be issued at least every 30 minutes while the incident remains critical.
+
+P2 - High
+- Severe degradation or outage of an important service with significant business impact and no acceptable workaround.
+- Technical owner must be engaged within 30 minutes.
+- Status updates should normally be issued at least every 60 minutes.
+
+P3 - Medium
+- Partial degradation, limited user impact, or a problem with a viable workaround.
+- Handle through the normal support process with appropriate technical ownership.
+
+P4 - Low
+- Minor issue, cosmetic defect, or request with little immediate operational impact.
+- Handle through normal backlog/support prioritization.
+
+3. INITIAL TRIAGE
+Capture the incident start time, affected service, environment, user/business impact, recent deployments or changes, correlation IDs, relevant safe error codes, and known dependencies.
+Do not paste passwords, tokens, private keys, full customer records, or Restricted data into the incident ticket.
+
+4. ESCALATION
+Escalate immediately to Information Security when there is suspected credential compromise, unauthorized access, unexpected public exposure, malware, or possible loss of Restricted data.
+Escalate to the owning development/integration team when repeated technical failures indicate a service or dependency defect.
+
+5. TECHNICAL EVIDENCE
+Preserve relevant logs, trace or correlation IDs, timestamps, deployment versions, queue/DLQ status, and monitoring graphs.
+Evidence collection must comply with the Data Classification Policy and Logging & Monitoring Standard.
+
+6. RECOVERY AND CLOSURE
+Restore service safely before pursuing non-essential optimization.
+For P1 and P2 incidents, create a post-incident review that records timeline, root cause, contributing factors, customer/business impact, corrective actions, and owners.
+Corrective actions should have due dates and be tracked to completion.
+
+7. COMMUNICATION
+Use factual language. Clearly separate confirmed facts, working hypotheses, actions in progress, and next update time.
+Do not speculate publicly about security breaches or customer data exposure before Information Security and Communications approve the statement.

@@ -1,0 +1,165 @@
+[
+  {
+    "id": "Q01",
+    "expected_sources": ["api-design-standards.pdf"],
+    "expected_facts": [
+      "Internet-facing APIs must use OAuth 2.0 or OpenID Connect (OIDC)."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "Require at least one permitted mechanism and no unsupported alternative such as Basic Authentication. Full credit should recognize both OAuth 2.0 and OIDC."
+  },
+  {
+    "id": "Q02",
+    "expected_sources": ["logging-monitoring-standard.pdf"],
+    "expected_facts": [
+      "Production application logs have a default retention of 90 days online/searchable."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "Do not accept the 365-day security-audit retention or the 30-day non-production retention."
+  },
+  {
+    "id": "Q03",
+    "expected_sources": ["api-error-codes.txt"],
+    "expected_facts": [
+      "E2001 is DEPENDENCY_TIMEOUT.",
+      "It means a required downstream dependency exceeded the configured response timeout.",
+      "Its HTTP status is 504."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "This tests retrieval of an exact identifier. The meaning and status must both be correct."
+  },
+  {
+    "id": "Q04",
+    "expected_sources": ["incident-management.txt"],
+    "expected_facts": [
+      "For a P1 Critical incident, Operations and relevant security/business owners must be notified within 15 minutes.",
+      "Status updates should be issued at least every 30 minutes while the incident remains critical."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "The answer should not substitute the P2 timings of 30 minutes for owner engagement and 60-minute updates."
+  },
+  {
+    "id": "Q05",
+    "expected_sources": ["integration-architecture-guidelines.pdf"],
+    "expected_facts": [
+      "A transient integration failure may be tried up to 3 attempts total: the initial attempt plus 2 retries.",
+      "Retries should use exponential backoff with jitter.",
+      "A more restrictive downstream contract takes precedence."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "Full credit requires interpreting '3 attempts total' correctly rather than claiming three retries after the initial call."
+  },
+  {
+    "id": "Q06",
+    "expected_sources": ["integration-architecture-guidelines.pdf"],
+    "expected_facts": [
+      "If no correlationId is available, the first integration component must create one.",
+      "The correlationId should then be propagated unchanged across the integration path."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "Equivalent terminology such as trace identifier is acceptable, but creation and downstream propagation are both required."
+  },
+  {
+    "id": "Q07",
+    "expected_sources": ["integration-architecture-guidelines.pdf"],
+    "expected_facts": [
+      "Asynchronous integration is preferred for long-running processing, burst absorption, or continued operation during temporary downstream unavailability."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "The answer should select asynchronous integration and relate the choice to the stated conditions."
+  },
+  {
+    "id": "Q08",
+    "expected_sources": ["data-classification-policy.docx"],
+    "expected_facts": [
+      "Apply the higher classification until the Data Governance owner confirms the appropriate level."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "The response must describe interim handling, not merely recommend asking Data Governance."
+  },
+  {
+    "id": "Q09",
+    "expected_sources": ["cloud-security-policy.pdf"],
+    "expected_facts": [
+      "Secrets must be stored in an approved secrets-management service.",
+      "Secrets must not be hard-coded in source code, container images, unauthorized-visible CI/CD variables, or plain-text configuration files.",
+      "Secrets should be rotated automatically where supported.",
+      "Workloads should prefer managed identity, workload identity, or short-lived credentials over long-lived static secrets."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "The question is broad. Accept a concise control summary, but it must distinguish mandatory storage/non-hard-coding controls from recommended identity and rotation practices."
+  },
+  {
+    "id": "Q10",
+    "expected_sources": [
+      "integration-architecture-guidelines.pdf",
+      "architecture-principles.docx"
+    ],
+    "expected_facts": [
+      "The response depends on failure type; technical transient failures may be retried, while functional, data, authentication, and authorization failures must not be blindly retried.",
+      "Synchronous calls must have finite timeouts.",
+      "Retries must be bounded and retryable duplicate-producing operations must be idempotent or use an idempotency key.",
+      "Asynchronous failures should use configured retries followed by a dead-letter queue or equivalent error channel when retries are exhausted.",
+      "Graceful degradation may be appropriate depending on the design."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "Because the prompt is underspecified, a good answer should qualify its advice and ask for or describe the missing context. Do not reward unconditional retry advice."
+  },
+  {
+    "id": "Q11",
+    "expected_sources": [
+      "api-design-standards.pdf",
+      "cloud-security-policy.pdf",
+      "data-classification-policy.docx",
+      "logging-monitoring-standard.pdf"
+    ],
+    "expected_facts": [
+      "The internet-facing API must use OAuth 2.0 or OIDC.",
+      "API traffic must use TLS 1.2 or higher.",
+      "Restricted data must be encrypted in transit and at rest using approved keys; customer-managed keys may be required by regulation, contract, or risk assessment.",
+      "Access must apply least privilege and role-based access control.",
+      "Restricted data must not be written to normal application or integration logs.",
+      "Credentials and authentication secrets must never be logged."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "This is a synthesis test. Full credit requires controls covering all four dimensions: identity, transport, storage, and logging, with citations spanning the relevant documents."
+  },
+  {
+    "id": "Q12",
+    "expected_sources": [
+      "api-error-codes.txt",
+      "api-design-standards.pdf",
+      "integration-architecture-guidelines.pdf"
+    ],
+    "expected_facts": [
+      "Represent the failure as E2001 DEPENDENCY_TIMEOUT with HTTP 504.",
+      "The standard error response must include errorCode, errorMessage, correlationId, and an ISO 8601 UTC timestamp.",
+      "A retry is appropriate only if the failure is transient and the operation is safe to retry.",
+      "The operation must be idempotent or protected by an idempotency key if a retry could create duplicates.",
+      "Retries are bounded to 3 attempts total unless a stricter downstream contract applies and should use exponential backoff with jitter."
+    ],
+    "should_refuse": false,
+    "evaluator_notes": "Require both consumer-facing error representation and retry safety. An answer that recommends unconditional retries fails even if the code and HTTP status are correct."
+  },
+  {
+    "id": "Q13",
+    "expected_sources": [],
+    "expected_facts": [],
+    "should_refuse": true,
+    "evaluator_notes": "The corpus defines cloud controls but names no chosen provider or migration plan. The system should state that the knowledge base lacks the answer."
+  },
+  {
+    "id": "Q14",
+    "expected_sources": [],
+    "expected_facts": [],
+    "should_refuse": true,
+    "evaluator_notes": "The corpus discusses outages and resilience but provides no service-specific recovery-time objective. Do not infer one from incident notification timings."
+  },
+  {
+    "id": "Q15",
+    "expected_sources": [],
+    "expected_facts": [],
+    "should_refuse": true,
+    "evaluator_notes": "Commercial agreements appear only as a Confidential-data example. No records-retention period for agreements is supplied."
+  }
+]
