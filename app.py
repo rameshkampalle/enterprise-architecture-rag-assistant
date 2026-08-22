@@ -1,9 +1,14 @@
 import os
+import sys
+from pathlib import Path
+
+# Make local package importable in Streamlit Cloud
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+
 import streamlit as st
 
 from enterprise_rag.config import Settings
 from enterprise_rag.answer import ask_question
-
 st.set_page_config(page_title="Enterprise Architecture RAG Assistant", page_icon="🏗️")
 st.title("🏗️ Enterprise Architecture Q&A")
 st.caption("Ask questions from your enterprise architecture policy documents.")
