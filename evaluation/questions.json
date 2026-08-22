@@ -1,77 +1,77 @@
 [
   {
-    "id": "Q01",
+    "question_id": "Q01",
     "category": "direct_factual",
     "question": "Which authentication approaches are permitted for an internet-facing API?"
   },
   {
-    "id": "Q02",
+    "question_id": "Q02",
     "category": "direct_factual",
-    "question": "How long must production application logs remain online and searchable by default?"
+    "question": "What retention period is defined for logs that contain security audit events?"
   },
   {
-    "id": "Q03",
+    "question_id": "Q03",
     "category": "direct_factual",
-    "question": "What does error code E2001 represent, and which HTTP status accompanies it?"
+    "question": "Who is responsible for updating architectural design standards when a platform change occurs?"
   },
   {
-    "id": "Q04",
+    "question_id": "Q04",
     "category": "direct_factual",
-    "question": "For a critical production incident, when must the relevant parties first be notified and how frequently should status updates follow?"
+    "question": "What encryption standard is required for data at rest in production environments?"
   },
   {
-    "id": "Q05",
+    "question_id": "Q05",
     "category": "direct_factual",
-    "question": "What retry limit and delay strategy apply to a transient integration failure when no stricter downstream contract exists?"
+    "question": "What is the default monitoring frequency for production incidents according to the policy documents?"
   },
   {
-    "id": "Q06",
+    "question_id": "Q06",
     "category": "semantic_paraphrased",
-    "question": "A request enters the platform without any trace identifier. What should the receiving component do, and how should later components treat that identifier?"
+    "question": "Can a publicly exposed API be protected with only static passwords and API keys?"
   },
   {
-    "id": "Q07",
+    "question_id": "Q07",
     "category": "semantic_paraphrased",
-    "question": "Which interaction style best fits work that can take a long time, arrives in bursts, and must survive a temporary outage of the receiving system?"
+    "question": "Which two technologies must be enforced when an API is open to users outside the organization?"
   },
   {
-    "id": "Q08",
+    "question_id": "Q08",
     "category": "semantic_paraphrased",
-    "question": "How should information be handled while its classification could reasonably fall into either of two levels?"
+    "question": "What should teams do if they cannot classify a dataset using the provided enterprise taxonomy?"
   },
   {
-    "id": "Q09",
+    "question_id": "Q09",
     "category": "ambiguous",
-    "question": "What must engineers do with secrets in cloud workloads?"
+    "question": "Should every data stream be encrypted end to end, including internal diagnostics?"
   },
   {
-    "id": "Q10",
+    "question_id": "Q10",
     "category": "ambiguous",
-    "question": "How should a team deal with a failing dependency?"
+    "question": "Is all cloud infrastructure allowed to be configured by any engineering lead by default?"
   },
   {
-    "id": "Q11",
+    "question_id": "Q11",
     "category": "multi_document",
-    "question": "A new public API will process Restricted customer information. What identity, transport, storage, and logging controls must its design include?"
+    "question": "How should API authentication, incident response, and logging standards combine when defining a secure production integration?"
   },
   {
-    "id": "Q12",
+    "question_id": "Q12",
     "category": "multi_document",
-    "question": "A downstream call exceeded its configured response limit. How should the API represent this failure to its consumer, and under what conditions may the operation be attempted again?"
+    "question": "Where should sensitive data classification requirements be linked with integration architecture decisions and monitoring controls?"
   },
   {
-    "id": "Q13",
-    "category": "unanswerable",
-    "question": "Which public cloud provider has been selected for next year's migration?"
-  },
-  {
-    "id": "Q14",
-    "category": "unanswerable",
-    "question": "What recovery-time objective is mandated for the customer ordering service?"
-  },
-  {
-    "id": "Q15",
+    "question_id": "Q13",
     "category": "unanswerable",
     "question": "How many years must signed commercial agreements be retained?"
+  },
+  {
+    "question_id": "Q14",
+    "category": "unanswerable",
+    "question": "Which external vendor has the highest revenue in the data platform budget year?"
+  },
+  {
+    "question_id": "Q15",
+    "category": "unanswerable",
+    "question": "What is the exact average monthly cost of running the cloud environment in this corpus?"
   }
 ]

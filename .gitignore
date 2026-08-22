@@ -1,27 +1,19 @@
-﻿# Python
-__pycache__/
-*.py[cod]
 .venv/
-venv/
-
-# Environment/secrets
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+dist/
+build/
+*.egg-info/
 .env
-.env.*
-!.env.example
-*.key
-credentials/
-secrets/
-
-# IDE / OS
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
-# Local vector stores / generated data
-chroma_db/
-.vectorstore/
-
-# Evaluation/generated outputs
+pinecone_api.log
+evaluation/results/*.json
 evaluation/results/*.csv
-!evaluation/results/evaluation-template.csv
+data/.tmp/
+data/raw/.tmp/
+data/corpus/.DS_Store
+src/enterprise_rag/._codex_backup/

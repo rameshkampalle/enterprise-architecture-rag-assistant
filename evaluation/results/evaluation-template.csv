@@ -1,16 +1,1 @@
-id,category,question,system,retrieved_sources,answer,retrieval_pass,facts_pass,faithfulness_pass,refusal_pass,evaluator_notes
-Q01,direct_factual,"Which authentication approaches are permitted for an internet-facing API?",,,,,,,,
-Q02,direct_factual,"How long must production application logs remain online and searchable by default?",,,,,,,,
-Q03,direct_factual,"What does error code E2001 represent, and which HTTP status accompanies it?",,,,,,,,
-Q04,direct_factual,"For a critical production incident, when must the relevant parties first be notified and how frequently should status updates follow?",,,,,,,,
-Q05,direct_factual,"What retry limit and delay strategy apply to a transient integration failure when no stricter downstream contract exists?",,,,,,,,
-Q06,semantic_paraphrased,"A request enters the platform without any trace identifier. What should the receiving component do, and how should later components treat that identifier?",,,,,,,,
-Q07,semantic_paraphrased,"Which interaction style best fits work that can take a long time, arrives in bursts, and must survive a temporary outage of the receiving system?",,,,,,,,
-Q08,semantic_paraphrased,"How should information be handled while its classification could reasonably fall into either of two levels?",,,,,,,,
-Q09,ambiguous,"What must engineers do with secrets in cloud workloads?",,,,,,,,
-Q10,ambiguous,"How should a team deal with a failing dependency?",,,,,,,,
-Q11,multi_document,"A new public API will process Restricted customer information. What identity, transport, storage, and logging controls must its design include?",,,,,,,,
-Q12,multi_document,"A downstream call exceeded its configured response limit. How should the API represent this failure to its consumer, and under what conditions may the operation be attempted again?",,,,,,,,
-Q13,unanswerable,"Which public cloud provider has been selected for next year's migration?",,,,,,,,
-Q14,unanswerable,"What recovery-time objective is mandated for the customer ordering service?",,,,,,,,
-Q15,unanswerable,"How many years must signed commercial agreements be retained?",,,,,,,,
+question_id,category,question,expected_sources,expected_facts,should_refuse,evaluator_notes,evaluation_batch,actual_answer,retrieved_sources,cited_expected_sources,top_score,retrieval_count,fact_checks,fact_coverage,source_recall,refusal_correct,evaluation_score,passed,matched_expected_sources,answer_is_refusal

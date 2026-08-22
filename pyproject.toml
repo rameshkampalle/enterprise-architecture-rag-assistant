@@ -1,13 +1,76 @@
-﻿[project]
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
 name = "enterprise-architecture-rag-assistant"
 version = "0.1.0"
-description = "Week 2 Enterprise Architecture RAG Assistant"
-requires-python = ">=3.11"
-dependencies = []
+description = "Production-oriented RAG assistant for enterprise architecture knowledge."
+requires-python = ">=3.11,<3.14"
 
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+dependencies = [
+  "docx2txt>=0.9,<1.0",
+  "langchain>=1.0,<2.0",
+  "langchain-community>=0.3,<1.0",
+  "langchain-google-genai>=3.0,<5.0",
+  "langchain-pinecone>=0.2,<1.0",
+  "langgraph>=1.0,<2.0",
+  "pandas>=2.2,<4.0",
+  "pinecone>=5.0,<9.0",
+  "pydantic-settings>=2.0,<3.0",
+  "pypdf>=5.0,<7.0",
+  "python-dotenv>=1.0,<2.0",
+  "rich>=13.0,<15.0",
+  "streamlit>=1.57,<2.0",
+  "tenacity>=8.0,<10.0",
+  "typer>=0.12,<1.0",
+]
+
+[project.scripts]
+enterprise-rag = "enterprise_rag.cli:app"
+
+[project.optional-dependencies]
+dev = [
+  "mypy>=1.14,<2.0",
+  "pre-commit>=4.0,<5.0",
+  "pytest>=8.0,<10.0",
+  "pytest-cov>=5.0,<8.0",
+  "ruff>=0.9,<1.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/enterprise_rag"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "--strict-config --strict-markers --cov=enterprise_rag --cov-report=term-missing"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["enterprise_rag"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "N", "RUF", "S", "UP", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+mypy_path = "src"
+packages = ["enterprise_rag"]
