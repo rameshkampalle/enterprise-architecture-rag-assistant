@@ -1,0 +1,10 @@
+streamlit
+python-dotenv
+pydantic
+pydantic-settings
+pinecone
+langchain
+langchain-community
+langchain-core
+langchain-pinecone
+langchain-google-genai
